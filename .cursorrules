@@ -1,0 +1,373 @@
+# Electronics Store Admin Panel - Full Stack Development Requirements
+
+## Backend API Integration (SpringBoot)
+This React frontend should integrate with the existing SpringBoot backend that provides:
+- JWT Authentication (/api/v1/auth/*)
+- User Management (/api/v1/users/*)
+- Product Management 
+- Category Management
+- Health Monitoring (/api/v1/health)
+
+## Core Features
+1. Authentication & Authorization
+   - Login page with JWT authentication using existing `/api/v1/auth/login` endpoint
+   - Token refresh mechanism using `/api/v1/auth/refresh-token`
+   - Protected routes with role-based access control (ADMIN/SUPER_ADMIN)
+   - Logout functionality that calls `/api/v1/auth/logout`
+
+2. Dashboard Overview
+   - Total products count
+   - Products by category statistics
+   - Recent additions/updates
+   - System health status from `/api/v1/health/info` endpoint
+   - Quick action buttons
+
+3. Product Management
+   - Add new products with image upload
+   - Edit existing products
+   - Delete products
+   - Bulk actions (delete, update status)
+   - Image management with preview and AWS S3 integration
+   - Rich text editor for product descriptions
+   - Product specifications in JSON format
+
+4. Category Management
+   - Create new categories
+   - Edit category details
+   - Delete categories (with validation for existing products)
+   - Category hierarchy management (parent/child categories)
+
+5. User Management
+   - View users with ADMIN role
+   - Create new admin users
+   - Update user status (active/inactive)
+   - Change password functionality
+
+## API Integration Requirements
+- All API requests should follow standardized response format:
+```json
+{
+    "status": "SUCCESS/ERROR",
+    "code": 200/400/401/403/etc,
+    "message": "Message description",
+    "data": {}, // Response data
+    "timestamp": "2023-01-01T12:00:00"
+}
+```
+- Authentication header format: `Authorization: Bearer {jwt-token}`
+- Refresh token mechanism for expired tokens
+- Error handling for all API responses
+
+## Technical Requirements
+- React.js (latest version)
+- TypeScript for type safety
+- React Router for navigation
+- State management with React Context API and hooks
+- Material-UI for admin interface
+- Form handling with React Hook Form + Yup validation
+- Axios for API requests with interceptors for token refresh
+- JWT token storage in secure cookies/localStorage
+- Protected routes implementation
+- Responsive admin layout
+
+## Pages Required (Mapped to Backend Endpoints)
+1. Login Page
+   - Integration with `/api/v1/auth/login`
+   - Password reset functionality using `/api/v1/auth/forgot-password`
+
+2. Dashboard Home
+   - System health status from `/api/v1/health/info`
+   - Product statistics
+   - Category statistics
+
+3. Product Management
+   - Product List with filters and search
+   - Add/Edit Product Form
+   - Image upload to backend (supports AWS S3)
+   - Product specifications in JSON format
+
+4. Category Management
+   - Category List with hierarchy display
+   - Add/Edit Category Form
+   - Validation for deletion (check for existing products)
+
+5. User Management
+   - List users (ADMIN/SUPER_ADMIN only)
+   - Create new admin users
+   - Update user status
+
+6. Settings Page
+   - Profile settings
+   - Password change using `/api/v1/auth/change-password`
+
+## Required Project Structure
+
+### Required Project Files
+Frontend/
+├── src/
+│   ├── components/ 
+│   │   ├── auth/
+│   │   │   ├── LoginForm.tsx 
+│   │   │   ├── PasswordReset.tsx
+│   │   │   ├── ProtectedRoute.tsx 
+│   │   │   └── Auth.context.tsx
+│   │   ├── dashboard/
+│   │   │   ├── Statistics.tsx 
+│   │   │   ├── SystemHealth.tsx
+│   │   │   ├── RecentActivity.tsx 
+│   │   │   └── QuickActions.tsx
+│   │   ├── products/
+│   │   │   ├── ProductForm.tsx 
+│   │   │   ├── ProductList.tsx 
+│   │   │   ├── ProductFilters.tsx
+│   │   │   ├── ImageUpload.tsx 
+│   │   │   ├── SpecificationsEditor.tsx
+│   │   │   └── Product.context.tsx
+│   │   ├── categories/
+│   │   │   ├── CategoryForm.tsx
+│   │   │   ├── CategoryList.tsx
+│   │   │   ├── CategoryTree.tsx
+│   │   │   └── Category.context.tsx
+│   │   ├── users/
+│   │   │   ├── UserForm.tsx
+│   │   │   ├── UserList.tsx
+│   │   │   └── User.context.tsx
+│   │   └── shared/
+│   │       ├── Sidebar.tsx 
+│   │       ├── Header.tsx 
+│   │       ├── Layout.tsx 
+│   │       ├── ErrorBoundary.tsx
+│   │       ├── LoadingIndicator.tsx
+│   │       ├── Notification.tsx
+│   │       └── ConfirmDialog.tsx
+│   ├── pages/ 
+│   │   ├── LoginPage.tsx 
+│   │   ├── DashboardPage.tsx 
+│   │   ├── ProductsPage.tsx 
+│   │   ├── ProductEditPage.tsx
+│   │   ├── CategoriesPage.tsx 
+│   │   ├── CategoryEditPage.tsx
+│   │   ├── UsersPage.tsx
+│   │   ├── UserEditPage.tsx
+│   │   ├── SettingsPage.tsx 
+│   │   └── NotFoundPage.tsx
+│   ├── types/ 
+│   │   ├── api-responses.ts
+│   │   ├── product.types.ts 
+│   │   ├── category.types.ts
+│   │   ├── user.types.ts 
+│   │   └── common.types.ts
+│   ├── services/ 
+│   │   ├── api.service.ts 
+│   │   ├── auth.service.ts
+│   │   ├── product.service.ts
+│   │   ├── category.service.ts
+│   │   ├── user.service.ts
+│   │   └── health.service.ts
+│   ├── utils/ 
+│   │   ├── axios-config.ts 
+│   │   ├── token-manager.ts
+│   │   ├── form-validators.ts
+│   │   ├── image-helpers.ts
+│   │   └── api-endpoints.ts
+│   ├── hooks/ 
+│   │   ├── useAuth.ts
+│   │   ├── useApiRequest.ts
+│   │   ├── useNotification.ts
+│   │   └── useFormWithValidation.ts
+│   ├── App.tsx 
+│   └── index.tsx 
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── assets/
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+
+### TypeScript Interfaces
+These interfaces should match the structure of responses from your Spring Boot backend:
+
+```typescript
+// API Response format
+interface ApiResponse<T> {
+  status: "SUCCESS" | "ERROR";
+  code: number;
+  message: string;
+  data: T;
+  timestamp: string;
+}
+
+// Auth Types
+interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+interface AuthResponse {
+  token: string;
+  refreshToken: string;
+  username: string;
+  role: string;
+}
+
+interface TokenRefreshRequest {
+  refreshToken: string;
+}
+
+interface TokenRefreshResponse {
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+}
+
+// Product Types
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: Category;
+  specifications: string; // JSON string
+  images: string[]; // URLs
+  status: "ACTIVE" | "INACTIVE";
+  stock: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Category Types
+interface Category {
+  id: number;
+  name: string;
+  description: string;
+  parentCategory?: Category;
+  status: "ACTIVE" | "INACTIVE";
+  createdAt: string;
+  updatedAt: string;
+}
+
+// User Types
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  role: "ADMIN" | "SUPER_ADMIN";
+  status: "ACTIVE" | "INACTIVE";
+  lastLogin: string;
+}
+```
+
+### API Service Integration
+The frontend should use Axios to connect to these API endpoints:
+
+1. Authentication
+   - POST /api/v1/auth/login
+   - POST /api/v1/auth/refresh-token
+   - POST /api/v1/auth/logout
+   - POST /api/v1/auth/change-password
+   - POST /api/v1/auth/forgot-password
+   - POST /api/v1/auth/reset-password
+
+2. Users
+   - GET /api/v1/users
+   - POST /api/v1/users/create
+
+3. Products
+   - GET /api/v1/products
+   - GET /api/v1/products/{id}
+   - POST /api/v1/products
+   - PUT /api/v1/products/{id}
+   - DELETE /api/v1/products/{id}
+   - POST /api/v1/products/upload-image
+   - PUT /api/v1/products/{id}/status
+
+4. Categories
+   - GET /api/v1/categories
+   - GET /api/v1/categories/{id}
+   - POST /api/v1/categories
+   - PUT /api/v1/categories/{id}
+   - DELETE /api/v1/categories/{id}
+
+5. Health Check
+   - GET /api/v1/health
+   - GET /api/v1/health/info
+
+### JWT Authentication Implementation
+- Store JWT in localStorage/cookies
+- Configure Axios interceptors to:
+  - Add JWT token to all requests
+  - Refresh tokens automatically when they expire
+  - Handle authentication errors
+
+### Form Fields for Products
+1. Basic Information
+   - Product name
+   - Description (rich text editor)
+   - Category (dropdown with existing categories)
+   - Price
+   - Status (active/inactive)
+
+2. Images
+   - Main product image upload
+   - Additional images (gallery)
+   - Support for AWS S3 storage
+
+3. Specifications
+   - JSON editor or structured form for specifications
+   - Key-value pairs for technical details
+
+4. Inventory
+   - Stock quantity
+   - Stock status
+
+### Quality Standards
+- Clean, maintainable code with proper TypeScript typing
+- Comprehensive error handling for all API calls
+- Loading states for all async operations
+- User feedback through notifications
+- Form validation matching backend requirements
+- Responsive design for all device sizes
+- Performance optimization (code splitting, lazy loading)
+- Secure token handling
+
+### Security Implementation
+- Implement token refresh mechanism
+- Handle session timeouts gracefully
+- Store sensitive data securely
+- Validate all inputs
+- Implement protected routes based on user roles
+- Clear authentication state on logout
+
+### Must contain the following files
+enforce_file_existence:
+    - "src/App.tsx"
+    - "src/index.tsx"
+    - "src/services/api.service.ts"
+    - "src/services/auth.service.ts"
+    - "src/components/auth/LoginForm.tsx"
+    - "src/components/shared/Layout.tsx"
+    - "src/utils/axios-config.ts"
+    - "src/types/api-responses.ts"
+    - "public/index.html"
+    - "package.json"
+    - "tsconfig.json"
+    
+### Must contain the following folders
+enforce_folder_existence:
+    - "src/components/"
+    - "src/pages/"
+    - "src/types/"
+    - "src/utils/"
+    - "src/services/"
+    - "src/hooks/"
+    - "public/"
+
+Always provide complete, production-ready code with:
+- All necessary imports
+- Error handling for API requests
+- Loading states
+- Comprehensive TypeScript type definitions
+- API service integration
+- Proper documentation
+- Form validation matching backend requirements
