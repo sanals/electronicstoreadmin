@@ -168,13 +168,16 @@ const ProductForm: React.FC = () => {
         stock: Number(data.stock)
       };
       
+      // Filter out blob URLs from the images array when sending to the backend
+      const apiImages = images.filter(img => !img.startsWith('blob:'));
+      
       let response;
       
       if (isEditMode && id) {
         // Update existing product with images
         const updateData: ProductUpdateRequest = {
           ...productData,
-          images: images
+          images: apiImages
         };
         
         response = await ProductService.updateProductWithImages(
@@ -191,6 +194,13 @@ const ProductForm: React.FC = () => {
       }
       
       if (response?.status === 'SUCCESS') {
+        // Clean up blob URLs after successful submission
+        images.forEach(image => {
+          if (image.startsWith('blob:')) {
+            URL.revokeObjectURL(image);
+          }
+        });
+        
         showNotification(
           isEditMode ? 'Product updated successfully' : 'Product created successfully',
           'success'
@@ -211,6 +221,18 @@ const ProductForm: React.FC = () => {
   };
   
   const loading = loadingCategories || loadingProduct;
+  
+  // Clean up object URLs when component unmounts to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      // Clean up any created object URLs when unmounting
+      images.forEach(image => {
+        if (image.startsWith('blob:')) {
+          URL.revokeObjectURL(image);
+        }
+      });
+    };
+  }, [images]);
   
   if (loading) {
     return <CircularProgress />;

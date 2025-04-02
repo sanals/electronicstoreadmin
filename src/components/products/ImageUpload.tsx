@@ -32,6 +32,11 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
  * @returns The image URL with authentication token if needed
  */
 const prepareImageUrl = (imageUrl: string): string => {
+  // If it's a blob URL (local browser preview), use it directly
+  if (imageUrl.startsWith('blob:')) {
+    return imageUrl;
+  }
+  
   // If it's already a full URL with http/https, use it as is
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     // Check if it's from our API and needs token
@@ -125,47 +130,68 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onUpload, onRemove })
       </Button>
       
       <Grid container spacing={2}>
-        {images.map((image, index) => (
-          <Grid item xs={6} sm={4} md={3} key={index}>
-            <Paper 
-              elevation={2} 
-              sx={{ 
-                position: 'relative',
-                height: 200,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <CardMedia
-                component="img"
-                image={prepareImageUrl(image)}
-                alt={`Product image ${index + 1}`}
+        {images.map((image, index) => {
+          const isPreview = image.startsWith('blob:');
+          return (
+            <Grid item xs={6} sm={4} md={3} key={index}>
+              <Paper 
+                elevation={2} 
                 sx={{ 
-                  height: '100%', 
-                  objectFit: 'contain',
-                  p: 1
-                }}
-              />
-              <IconButton
-                size="small"
-                color="error"
-                onClick={() => onRemove(index)}
-                sx={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 8,
-                  bgcolor: 'rgba(255, 255, 255, 0.7)',
-                  '&:hover': {
-                    bgcolor: 'rgba(255, 255, 255, 0.9)',
-                  }
+                  position: 'relative',
+                  height: 200,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: isPreview ? '2px dashed #4caf50' : 'none' // Green dashed border for previews
                 }}
               >
-                <DeleteIcon />
-              </IconButton>
-            </Paper>
-          </Grid>
-        ))}
+                {isPreview && (
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      position: 'absolute', 
+                      top: 8, 
+                      left: 8, 
+                      bgcolor: 'rgba(76, 175, 80, 0.8)', 
+                      color: 'white',
+                      px: 1,
+                      py: 0.5,
+                      borderRadius: 1
+                    }}
+                  >
+                    Preview
+                  </Typography>
+                )}
+                <CardMedia
+                  component="img"
+                  image={prepareImageUrl(image)}
+                  alt={`Product image ${index + 1}`}
+                  sx={{ 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    p: 1
+                  }}
+                />
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => onRemove(index)}
+                  sx={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    bgcolor: 'rgba(255, 255, 255, 0.7)',
+                    '&:hover': {
+                      bgcolor: 'rgba(255, 255, 255, 0.9)',
+                    }
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Paper>
+            </Grid>
+          );
+        })}
         
         {images.length === 0 && (
           <Grid item xs={12}>

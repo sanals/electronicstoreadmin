@@ -110,4 +110,49 @@ export class CategoryService {
       return await ApiService.delete<null>(API_ENDPOINTS.CATEGORY_BY_ID(id));
     }
   }
+
+  /**
+   * Create a new category with image
+   * @param formData - FormData containing category data and image
+   * @returns Promise with created category
+   */
+  static async createCategoryWithImage(formData: FormData): Promise<ApiResponse<CategoryResponse>> {
+    try {
+      const response = await fetch(`${DIRECT_API_BASE_URL}${API_ENDPOINTS.CREATE_CATEGORY_WITH_IMAGE}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Create category with image API call error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update a category with image
+   * @param id - Category ID
+   * @param formData - FormData containing category data and image
+   * @returns Promise with updated category
+   */
+  static async updateCategoryWithImage(id: number, formData: FormData): Promise<ApiResponse<CategoryResponse>> {
+    try {
+      const response = await fetch(`${DIRECT_API_BASE_URL}${API_ENDPOINTS.UPDATE_CATEGORY_WITH_IMAGE(id)}`, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Update category with image API call error:', error);
+      throw error;
+    }
+  }
 } 

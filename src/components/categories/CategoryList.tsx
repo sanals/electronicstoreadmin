@@ -163,7 +163,8 @@ const CategoryList = () => {
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
-          onClick={handleOpenDialog}
+          component={Link}
+          to="/categories/new"
         >
           New Category
         </Button>

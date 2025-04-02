@@ -29,6 +29,8 @@ export const API_ENDPOINTS = {
   // Categories endpoints
   CATEGORIES: '/api/v1/categories',
   CATEGORY_BY_ID: (id: number) => `/api/v1/categories/${id}`,
+  CREATE_CATEGORY_WITH_IMAGE: '/api/v1/categories/with-image',
+  UPDATE_CATEGORY_WITH_IMAGE: (id: number) => `/api/v1/categories/${id}/with-image`,
   
   // Health check endpoints
   HEALTH: '/api/v1/health',

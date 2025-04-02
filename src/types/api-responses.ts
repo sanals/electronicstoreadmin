@@ -51,6 +51,7 @@ export interface CategorySummary {
   id: number;
   name: string;
   description: string;
+  imageUrl?: string;
 }
 
 export interface ProductSummary {
@@ -117,6 +118,7 @@ export interface Category {
   id: number;
   name: string;
   description: string;
+  imageUrl?: string;
   parentCategory?: Category;
   subCategories?: CategorySummary[];
   products?: ProductSummary[];
@@ -131,6 +133,7 @@ export interface CategoryCreateRequest {
   name: string;
   description: string;
   parentCategoryId?: number;
+  imageUrl?: string;
 }
 
 export interface CategoryUpdateRequest extends CategoryCreateRequest {}
@@ -139,6 +142,7 @@ export interface CategoryResponse {
   id: number;
   name: string;
   description: string;
+  imageUrl?: string;
   parentCategory?: CategorySummary;
   subCategories?: CategorySummary[];
   products?: ProductSummary[];
