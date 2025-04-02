@@ -79,11 +79,11 @@ const PasswordReset: React.FC<PasswordResetProps> = ({ mode }) => {
     setMessage(null);
     
     try {
-      const response = await AuthService.resetPassword({
-        token: data.token,
-        newPassword: data.newPassword,
-        confirmPassword: data.confirmPassword,
-      });
+      const response = await AuthService.resetPassword(
+        data.token,
+        data.newPassword,
+        data.confirmPassword
+      );
       
       if (response.status === 'SUCCESS') {
         setMessage({
